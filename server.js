@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 var server = app.listen(3000);
 app.use(express.static(__dirname + '/public'));
+const cors = require('cors');
+app.use(cors());
 
 console.log('Server is running...');
 
@@ -12,9 +14,9 @@ var io = socket(server);
 io.sockets.on('connection', newConnection);
 
 function newConnection(socket) {
-	//console.log('new connection ' + socket.id);
-	socket.on('mouse', mouseMsg);
-	function mouseMsg(data) {
-		socket.broadcast.emit('mouse', data);
-	}
+        //console.log('new connection ' + socket.id);
+        socket.on('mouse', mouseMsg);
+        function mouseMsg(data) {
+                socket.broadcast.emit('mouse', data);
+        }
 }
