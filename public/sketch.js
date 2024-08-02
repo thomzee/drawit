@@ -23,7 +23,7 @@ function setup() {
   	inputSize = createInput(defaultSize, 'number');
   	inputSize.position(10, 150);
 
-	socket = io.connect('http://localhost:3000');
+	socket = io.connect(process.env.APP_HOST+":"+process.env.APP_PORT);
 	socket.on('mouse', newDrawing);
 }
 

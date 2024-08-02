@@ -1,6 +1,7 @@
 var express = require('express');
+require('dotenv').config();
 var app = express();
-var server = app.listen(3000);
+var server = app.listen(process.env.APP_PORT);
 app.use(express.static(__dirname + '/public'));
 const cors = require('cors');
 app.use(cors());
