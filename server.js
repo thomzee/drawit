@@ -6,7 +6,8 @@ app.use(express.static(__dirname + '/public'));
 const cors = require('cors');
 app.use(cors());
 
-console.log('Server is running...');
+const port = process.env.APP_PORT;
+console.log(`Server is running at ${port}...`);
 
 var socket = require('socket.io');
 
