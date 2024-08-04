@@ -1,8 +1,8 @@
 [build]
-command = “npm run build”
-publish = “/build”
-base =“/”
+command = "npm run build"
+publish = "/build"
+base ="/"
 [[redirects]]
-from = “/*”
-to = “/public/index.html”
+from = "/*"
+to = "/public/index.html"
 status = 200
