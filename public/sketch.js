@@ -1,14 +1,17 @@
 // drawit — collaborative canvas
-// All artwork is stored in a fixed 1600x900 "world" so every client, whatever
-// its screen size, renders the exact same picture (scaled to fit).
+// The canvas fills the whole viewport. Artwork is stored in a width-normalized
+// "world": x runs 0..WORLD_W across the full screen width on every device, so
+// everyone shares the same left-to-right space with no distortion. Taller
+// screens simply reveal more canvas below (larger world y).
 
-const W = 1600, H = 900;
+const WORLD_W = 1600;
 const CANVAS_BG = '#161822';
+const BRUSH_LABELS = { pen: 'Pen', marker: 'Marker', neon: 'Neon', spray: 'Spray', rainbow: 'Rainbow', eraser: 'Eraser' };
 
 let cv, ctx;            // p5 canvas + 2D context (the artwork)
 let overlay, octx;      // separate canvas for live cursors (cleared each frame)
 let stageEl;
-let cw = W, ch = H, scale = 1, dpr = 1;
+let cw = 0, ch = 0, scale = 1, dpr = 1;
 
 let strokes = [];       // every segment ever drawn (world coords)
 let isDrawing = false;
@@ -70,14 +73,9 @@ function draw() {
 
 function computeLayout() {
 	dpr = Math.min(2, window.devicePixelRatio || 1);
-	const availW = window.innerWidth - 40;
-	const availH = window.innerHeight - 190;   // leave room for header + toolbar
-	scale = Math.min(availW / W, availH / H);
-	cw = Math.round(W * scale);
-	ch = Math.round(H * scale);
-	scale = cw / W;
-	stageEl.style.width = cw + 'px';
-	stageEl.style.height = ch + 'px';
+	cw = window.innerWidth;
+	ch = window.innerHeight;
+	scale = cw / WORLD_W;    // width-normalized: full screen width == WORLD_W units
 }
 
 function sizeOverlay() {
@@ -267,6 +265,7 @@ function setupUI() {
 			document.querySelectorAll('.brush').forEach((b) => b.classList.remove('active'));
 			btn.classList.add('active');
 			currentBrush = btn.dataset.brush;
+			updateSummary();
 		});
 	});
 
@@ -302,6 +301,7 @@ function setupUI() {
 		pv.style.height = d + 'px';
 		const pct = ((currentSize - sizeInput.min) / (sizeInput.max - sizeInput.min)) * 100;
 		sizeInput.style.setProperty('--fill', pct + '%');
+		updateSummary();
 	};
 	sizeInput.addEventListener('input', apply);
 	apply();
@@ -315,6 +315,19 @@ function setupUI() {
 		background(CANVAS_BG);
 		if (socket) socket.emit('clear');
 	});
+
+	// Collapsible bottom sheet
+	const sheet = document.getElementById('sheet');
+	const toggle = document.getElementById('sheetToggle');
+	toggle.addEventListener('click', () => {
+		const collapsed = sheet.classList.toggle('collapsed');
+		toggle.setAttribute('aria-expanded', String(!collapsed));
+	});
+}
+
+function updateSummary() {
+	document.getElementById('summaryBrush').textContent = BRUSH_LABELS[currentBrush] || 'Pen';
+	document.getElementById('summarySize').textContent = currentSize;
 }
 
 function setColor(hex) {
