@@ -29,9 +29,7 @@
 			margin: 0;
 			height: 100%;
 			overflow: hidden;
-			background:
-				radial-gradient(1400px 700px at 50% -20%, rgba(124, 92, 255, 0.12), transparent 60%),
-				var(--bg);
+			background: var(--bg);
 			color: var(--text);
 			font-family: var(--font-ui);
 			-webkit-font-smoothing: antialiased;
@@ -39,28 +37,14 @@
 			overscroll-behavior: none;
 		}
 
-		/* ---- Stage: one shared board, fitted + centered on every screen ---- */
-		#stagewrap {
-			position: fixed;
-			top: calc(52px + env(safe-area-inset-top, 0px));
-			left: 0;
-			right: 0;
-			bottom: calc(92px + env(safe-area-inset-bottom, 0px));
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 12px;
-			z-index: 1;
-		}
-
+		/* ---- Stage: full-bleed canvas ---- */
 		#stage {
-			position: relative;
-			border-radius: 14px;
+			position: fixed;
+			inset: 0;
 			overflow: hidden;
-			background: var(--surface);
-			box-shadow:
-				0 30px 90px -30px rgba(0, 0, 0, 0.85),
-				0 0 0 1px var(--hair-strong);
+			background:
+				radial-gradient(1400px 700px at 50% -20%, rgba(124, 92, 255, 0.10), transparent 60%),
+				var(--surface);
 		}
 
 		#stage canvas { display: block; position: absolute; inset: 0; }
@@ -335,10 +319,8 @@
 </head>
 
 <body>
-	<div id="stagewrap">
-		<div id="stage">
-			<canvas id="cursors"></canvas>
-		</div>
+	<div id="stage">
+		<canvas id="cursors"></canvas>
 	</div>
 
 	<div class="hud">

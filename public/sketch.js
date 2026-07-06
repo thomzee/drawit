@@ -1,9 +1,10 @@
 // drawit — collaborative canvas
-// One shared board (a fixed 1600x900 "world") is fitted and centered on every
-// screen, so every client sees the exact same picture in full. Drawing anywhere
-// on the board is visible to everyone, whatever their screen size.
+// The canvas fills the whole viewport. Artwork is stored in a width-normalized
+// "world": x runs 0..WORLD_W across the full screen width on every device, so
+// everyone shares the same left-to-right space with no distortion. Taller
+// screens simply reveal more canvas below (larger world y).
 
-const WORLD_W = 1600, WORLD_H = 900;
+const WORLD_W = 1600;
 const CANVAS_BG = '#161822';
 const BRUSH_LABELS = { pen: 'Pen', marker: 'Marker', neon: 'Neon', spray: 'Spray', rainbow: 'Rainbow', eraser: 'Eraser' };
 
@@ -72,15 +73,9 @@ function draw() {
 
 function computeLayout() {
 	dpr = Math.min(2, window.devicePixelRatio || 1);
-	const wrap = document.getElementById('stagewrap');
-	const availW = Math.max(80, wrap.clientWidth - 24);
-	const availH = Math.max(80, wrap.clientHeight - 24);
-	scale = Math.min(availW / WORLD_W, availH / WORLD_H);   // contain: whole board always visible
-	cw = Math.round(WORLD_W * scale);
-	ch = Math.round(WORLD_H * scale);
-	scale = cw / WORLD_W;
-	stageEl.style.width = cw + 'px';
-	stageEl.style.height = ch + 'px';
+	cw = window.innerWidth;
+	ch = window.innerHeight;
+	scale = cw / WORLD_W;    // width-normalized: full screen width == WORLD_W units
 }
 
 function sizeOverlay() {
